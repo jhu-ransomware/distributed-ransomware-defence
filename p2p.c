@@ -91,7 +91,7 @@ void sending()
     //IN PEER WE TRUST
     printf("Enter the port to send message:"); //Considering each peer will enter different port
     scanf("%d", &PORT_server);
-    PORT_server = 10200;
+    PORT_server = 10100;
 
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
@@ -103,7 +103,8 @@ void sending()
     }
 
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY; //INADDR_ANY always gives an IP of 0.0.0.0
+    inet_pton(AF_INET, "128.220.224.84", &(serv_addr.sin_addr));
+    // serv_addr.sin_addr.s_addr = INADDR_ANY; //INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(PORT_server);
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
