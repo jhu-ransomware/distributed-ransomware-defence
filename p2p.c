@@ -9,7 +9,8 @@
 #include <pthread.h>
 
 char name[20];
-int PORT;
+int PORT = 10100;
+int FAULTY;
 
 void sending();
 void receiving(int server_fd);
@@ -20,8 +21,8 @@ int main(int argc, char const *argv[])
     printf("Enter name:");
     scanf("%s", name);
 
-    printf("Enter your port number:");
-    scanf("%d", &PORT);
+    printf("Enter your fault status:");
+    scanf("%d", &FAULTY);
 
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
@@ -33,8 +34,8 @@ int main(int argc, char const *argv[])
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
-    // Forcefully attaching socket to the port
 
+    // Forcefully attaching socket to the port
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
@@ -120,6 +121,11 @@ void sending()
     sprintf(buffer, "%s[PORT:%d] says: %s", name, PORT, hello);
     send(sock, buffer, sizeof(buffer), 0);
     printf("\nMessage sent\n");
+
+    int response;
+    recv(sock, &response, sizeof(int), 0);
+    printf("Fault status is: %i\n", response);
+
     close(sock);
 }
 
@@ -179,6 +185,8 @@ void receiving(int server_fd)
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
                     printf("\n%s\n", buffer);
+                    send(i, &FAULTY, sizeof(int), 0);
+                    printf("Send fault status\n");
                     FD_CLR(i, &current_sockets);
                 }
             }
