@@ -113,7 +113,6 @@ void sending(char ips[][IP_LENGTH], int num_connections) {
 
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
-    char hello[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -130,13 +129,13 @@ void sending(char ips[][IP_LENGTH], int num_connections) {
     }
 
     // Ask for fault status
-    char buffer[] = "What is your fault status?";
-    send(sock, buffer, sizeof(buffer), 0);
+    char buffer[1000] = {0};
+    sprintf(buffer, "%s asks what is your fault status?", name);
+    send(sock, buffer, strlen(buffer), 0);
     printf("\nMessage sent\n");
 
-    int response;
-    recv(sock, &response, sizeof(int), 0);
-    printf("Fault status is: %i\n", response);
+    recv(sock, &buffer, sizeof(buffer), 0);
+    printf("%s\n", buffer);
 
     close(sock);
   }
@@ -198,8 +197,9 @@ void receiving(int server_fd)
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
                     printf("\n%s\n", buffer);
-                    send(i, &FAULTY, sizeof(int), 0);
-                    printf("Send fault status\n");
+                    sprintf(buffer, "%s fault status: %d", name, FAULTY);
+                    printf("%s\n", buffer);
+                    send(i, buffer, strlen(buffer) + 1, 0);
                     FD_CLR(i, &current_sockets);
                 }
             }
