@@ -8,8 +8,10 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
+#define IP_LENGTH 16
+#define PORT 10100
+
 char name[20];
-int PORT = 10100;
 int FAULTY;
 
 void sending();
@@ -40,10 +42,6 @@ int main(int argc, char const *argv[])
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    //Printed the server socket addr and port
-    printf("IP address is: %s\n", inet_ntoa(address.sin_addr));
-    printf("port is: %d\n", (int)ntohs(address.sin_port));
-
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
@@ -54,19 +52,47 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
+
+    FILE* file = fopen("connections.txt", "r");
+    if (file == NULL) {
+      perror("Error opening connections file\n");
+      exit(EXIT_FAILURE);
+    }
+
+    int num_connections;
+    fscanf(file, "%d ", &num_connections);
+
+    int connections = 0;
+    char ips[num_connections][IP_LENGTH];
+    char ip[IP_LENGTH];
+
+    // Read in list of connections
+    while (fgets(ip, sizeof(ip), file)) {
+      ip[strcspn(ip, "\r\n")] = 0; // strip out new line characters
+      strcpy(ips[connections++], ip);
+    }
+
+    fclose(file);
+
+    // DEBUGGING LINE
+    // todo: hid behind flag
+    printf("Connections (%i):\n", connections);
+    for (int i = 0; i < connections; ++i) {
+      printf("%s\n", ips[i]);
+    }
+    
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
-    printf("\n*****At any point in time press the following:*****\n1.Send message\n0.Quit\n");
+    printf("\n*****At any point in time press the following:*****\n1.Check Fault Status\n0.Quit\n");
     printf("\nEnter choice:");
     do
     {
-
         scanf("%d", &ch);
         switch (ch)
         {
         case 1:
-            sending();
+            sending(ips, num_connections);
             break;
         case 0:
             printf("\nLeaving\n");
@@ -82,17 +108,8 @@ int main(int argc, char const *argv[])
 }
 
 //Sending messages to port
-void sending()
-{
-
-    char buffer[2000] = {0};
-    //Fetching port number
-    int PORT_server;
-
-    //IN PEER WE TRUST
-    printf("Enter the port to send message:"); //Considering each peer will enter different port
-    scanf("%d", &PORT_server);
-    PORT_server = 10100;
+void sending(char ips[][IP_LENGTH], int num_connections) {
+  for (int i = 0; i < num_connections; ++i) {
 
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
@@ -104,21 +121,16 @@ void sending()
     }
 
     serv_addr.sin_family = AF_INET;
-    inet_pton(AF_INET, "128.220.224.84", &(serv_addr.sin_addr));
-    // serv_addr.sin_addr.s_addr = INADDR_ANY; //INADDR_ANY always gives an IP of 0.0.0.0
-    serv_addr.sin_port = htons(PORT_server);
+    inet_pton(AF_INET, *(ips + i), &(serv_addr.sin_addr));
+    serv_addr.sin_port = htons(PORT);
 
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("\nConnection Failed \n");
         return;
     }
 
-    char dummy;
-    printf("Enter your message:");
-    scanf("%c", &dummy); //The buffer is our enemy
-    scanf("%[^\n]s", hello);
-    sprintf(buffer, "%s[PORT:%d] says: %s", name, PORT, hello);
+    // Ask for fault status
+    char buffer[] = "What is your fault status?";
     send(sock, buffer, sizeof(buffer), 0);
     printf("\nMessage sent\n");
 
@@ -127,6 +139,7 @@ void sending()
     printf("Fault status is: %i\n", response);
 
     close(sock);
+  }
 }
 
 //Calling receiving every 2 seconds
