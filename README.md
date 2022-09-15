@@ -18,3 +18,5 @@ Example:
 192.168.11.3
 192.168.11.4
 ```
+
+Whenever, one first starts the program, they will be prompted for (a) the name of the system it is running on, and (b) the fault status of the program.
