@@ -23,7 +23,7 @@ Whenever one first starts the program, they will be prompted for (a) the name of
 
 ## Compiling on CentOS
 
-Note that CentOS is really annoying and until I get a better setup a couple of additional steps might be necessary.
-(a) Compile with ```-std=c99``` flag
-(b) Including the ```sys/select.h``` header
-(c) Turning on the firewall with ```systemctl stop firewalld``` if you find the other nodes can't connect to it but can ping it.
+Note that CentOS is really annoying and until I get a better setup a couple of additional steps might be necessary. <br/>
+(a) Compile with ```-std=c99``` flag <br/>
+(b) Including the ```sys/select.h``` header <br/>
+(c) Turning on the firewall with ```systemctl stop firewalld``` if you find the other nodes can't connect to it but can ping it. <br/>
