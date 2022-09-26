@@ -7,14 +7,16 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <time.h>
 
 #define IP_LENGTH 16
 #define PORT 10100
+#define TESTING_INTERVAL 30
 
 char name[20];
 int FAULTY;
 
-void sending();
+void check_status(char ips[][IP_LENGTH], int num_connections);
 void receiving(int server_fd);
 void *receive_thread(void *server_fd);
 
@@ -80,27 +82,33 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < connections; ++i) {
       printf("%s\n", ips[i]);
     }
+
+    struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0;
+
+    fd_set readfds;
+    FD_ZERO(&readfds);
     
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
-    printf("\n*****At any point in time press the following:*****\n1.Check Fault Status\n0.Quit\n");
-    printf("\nEnter choice:");
-    do
-    {
-        scanf("%d", &ch);
-        switch (ch)
-        {
-        case 1:
-            sending(ips, num_connections);
-            break;
-        case 0:
-            printf("\nLeaving\n");
-            break;
-        default:
-            printf("\nWrong choice\n");
+
+    printf("\n*****At any point in time enter a new fault status (1 or 0):*****");
+    time_t start = time(NULL);
+    while (1) {
+        FD_SET(STDIN_FILENO, &readfds);
+        time_t end = time(NULL);
+
+        if (select(1, &readfds, NULL, NULL, &timeout)) {
+            scanf("%d", &FAULTY);
+            printf("Updated fault status to: %i\n", FAULTY);
         }
-    } while (ch);
+
+        if (difftime(end, start) > TESTING_INTERVAL) {
+          check_status(ips, num_connections);
+        }
+    }
 
     close(server_fd);
 
@@ -108,7 +116,7 @@ int main(int argc, char const *argv[])
 }
 
 //Sending messages to port
-void sending(char ips[][IP_LENGTH], int num_connections) {
+void check_status(char ips[][IP_LENGTH], int num_connections) {
   for (int i = 0; i < num_connections; ++i) {
 
     int sock = 0, valread;
