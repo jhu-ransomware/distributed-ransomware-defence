@@ -11,7 +11,7 @@
 
 #define IP_LENGTH 16
 #define PORT 10100
-#define TESTING_INTERVAL 30
+#define TESTING_INTERVAL 15
 
 char name[20];
 int FAULTY;
@@ -104,9 +104,10 @@ int main(int argc, char const *argv[])
             scanf("%d", &FAULTY);
             printf("Updated fault status to: %i\n", FAULTY);
         }
-
+        // printf("%lf\n", difftime(end, start));
         if (difftime(end, start) > TESTING_INTERVAL) {
           check_status(ips, num_connections);
+          start = time(NULL);
         }
     }
 
