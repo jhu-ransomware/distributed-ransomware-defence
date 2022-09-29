@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <time.h>
+#include "diagnose.h"
 
 #define IP_LENGTH 16
 #define PORT 10100
