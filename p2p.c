@@ -13,7 +13,7 @@
 
 #define IP_LENGTH 16
 #define PORT 10100
-#define TESTING_INTERVAL 15
+#define TESTING_INTERVAL 5
 #define NUM_NODES 7
 
 char name[20];
@@ -23,6 +23,7 @@ int FAULTY;
 void check_status(char ips[][IP_LENGTH], int num_connections);
 void receiving(int server_fd);
 void *receive_thread(void *server_fd);
+void send_array(int sock);
 
 int main(int argc, char const *argv[]) {
     printf("Enter name:");
@@ -36,8 +37,7 @@ int main(int argc, char const *argv[]) {
     int k = 0;
 
     // Creating socket file descriptor
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
@@ -58,10 +58,14 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    FILE* file = fopen("connections.txt", "r");
+    FILE* file = fopen("/tmp/connections.txt", "r");
     if (file == NULL) {
       perror("Error opening connections file\n");
       exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < NUM_NODES; ++i) {
+      tested_up[i] = -1;
     }
 
     int num_connections;
@@ -98,12 +102,13 @@ int main(int argc, char const *argv[]) {
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
     int ready = 0;
-    printf("Enter 1 to begin testing other nodes (hit enter twice):\n"); // TODO: Fix this please
+    printf("Enter 1 to begin testing other nodes (hit enter twice):\n"); // TODO: Fix this needing enter twice
     while (!ready) {
         scanf("%d", &ready);
     }
 
     printf("\n*****At any point in time enter a new fault status (1 or 0):*****");
+    printf("\n");
     time_t start = time(NULL);
     while (1) {
         FD_SET(STDIN_FILENO, &readfds);
@@ -113,8 +118,10 @@ int main(int argc, char const *argv[]) {
             scanf("%d", &FAULTY);
             printf("Updated fault status to: %i\n", FAULTY);
         }
-
-        if (difftime(end, start) > TESTING_INTERVAL) {
+        int curr_time = difftime(end, start);
+        
+        if (curr_time > TESTING_INTERVAL) {
+          printf("here\n");
           check_status(ips, num_connections);
           start = time(NULL);
         }
@@ -123,12 +130,11 @@ int main(int argc, char const *argv[]) {
     close(server_fd);
 
     return 0;
-}
+} 
 
 //Sending messages to port
 void check_status(char ips[][IP_LENGTH], int num_connections) {
   for (int i = 0; i < num_connections; ++i) {
-
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -147,13 +153,17 @@ void check_status(char ips[][IP_LENGTH], int num_connections) {
     }
 
     // Ask for fault status
-    char buffer[1000] = {0};
-    sprintf(buffer, "%s asks what is your fault status?", name);
-    send(sock, buffer, strlen(buffer), 0);
+    int buffer[NUM_NODES] = {0};
+    send(sock, buffer, 4, 0);
     printf("\nMessage sent\n");
 
     recv(sock, &buffer, sizeof(buffer), 0);
-    printf("%s\n", buffer);
+    printf("Sent array values: \n");
+    for (int i = 0; i < NUM_NODES; ++i) {
+        int val = ntohl(buffer[i]);
+        if (i < NUM_NODES - 1) printf("%d ", val);
+        else printf("%d\n", val);
+    }
 
     close(sock);
   }
@@ -167,6 +177,17 @@ void *receive_thread(void *server_fd)
     {
         sleep(2);
         receiving(s_fd);
+    }
+}
+
+void send_array(int sock) {
+    int buffer[NUM_NODES];
+    for (int i = 0; i < NUM_NODES; ++i) {
+        buffer[i] = htonl(tested_up[i]);
+    }
+
+    if (send(sock, buffer, NUM_NODES * sizeof(int), 0) < 0) {
+        perror("Error sending tested up\n");
     }
 }
 
@@ -214,10 +235,7 @@ void receiving(int server_fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    printf("\n%s\n", buffer);
-                    sprintf(buffer, "%s fault status: %d", name, FAULTY);
-                    printf("%s\n", buffer);
-                    send(i, buffer, strlen(buffer) + 1, 0);
+                    send_array(i);
                     FD_CLR(i, &current_sockets);
                 }
             }
