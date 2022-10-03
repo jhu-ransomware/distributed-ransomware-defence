@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -13,16 +14,17 @@
 #define IP_LENGTH 16
 #define PORT 10100
 #define TESTING_INTERVAL 15
+#define NUM_NODES 7
 
 char name[20];
+int tested_up[NUM_NODES];
 int FAULTY;
 
 void check_status(char ips[][IP_LENGTH], int num_connections);
 void receiving(int server_fd);
 void *receive_thread(void *server_fd);
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
     printf("Enter name:");
     scanf("%s", name);
 
@@ -95,6 +97,12 @@ int main(int argc, char const *argv[])
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
+    int ready = 0;
+    printf("Enter 1 to begin testing other nodes (hit enter twice):\n"); // TODO: Fix this please
+    while (!ready) {
+        scanf("%d", &ready);
+    }
+
     printf("\n*****At any point in time enter a new fault status (1 or 0):*****");
     time_t start = time(NULL);
     while (1) {
@@ -105,7 +113,7 @@ int main(int argc, char const *argv[])
             scanf("%d", &FAULTY);
             printf("Updated fault status to: %i\n", FAULTY);
         }
-        // printf("%lf\n", difftime(end, start));
+
         if (difftime(end, start) > TESTING_INTERVAL) {
           check_status(ips, num_connections);
           start = time(NULL);
@@ -215,7 +223,6 @@ void receiving(int server_fd)
             }
         }
 
-        if (k == (FD_SETSIZE * 2))
-            break;
+        if (k == (FD_SETSIZE * 2)) break;
     }
 }
