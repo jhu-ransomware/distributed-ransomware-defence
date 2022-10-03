@@ -25,5 +25,10 @@ Whenever one first starts the program, they will be prompted for (a) the name of
 
 Note that CentOS is really annoying and until I get a better setup a couple of additional steps might be necessary. <br/>
 (a) Compile with ```-std=c99``` flag <br/>
-(b) Including the ```sys/select.h``` header <br/>
-(c) Turning on the firewall with ```systemctl stop firewalld``` if you find the other nodes can't connect to it but can ping it. <br/>
+(b) Turning on the firewall with ```systemctl stop firewalld``` if you find the other nodes can't connect to it but can ping it. <br/>
+
+## TODOS ON IMPLEMENTATION
+
+I'm going to keep a running list of todos on here with the purposes of me not forgetting about them. These are things that don't necessarily keep the implementation from working but will need to be improved. <br/>
+1) Add a mutex lock around the tested up array usage.
+2) Better way of keeping track of how big to make array.
