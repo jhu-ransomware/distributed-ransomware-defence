@@ -16,12 +16,16 @@
 
 int main(int argc, char const *argv[]) {
     int faulty;
+    int node_num;
+
+    printf("What's your node number:");
+    scanf("%d", &node_num);
 
     printf("Enter your fault status:");
     scanf("%d", &faulty);
 
 
-    FILE* file = fopen("connections.txt", "r");
+    FILE* file = fopen("/tmp/connections.txt", "r");
     if (file == NULL) {
       perror("Error opening connections file\n");
       exit(EXIT_FAILURE);
@@ -49,6 +53,6 @@ int main(int argc, char const *argv[]) {
       printf("%s\n", ips[i]);
     }
 
-    start_algo(faulty, ips, num_connections);
+    start_algo(faulty, ips, num_connections, node_num);
     return 0;
 } 
