@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <time.h>
 #include "diagnose.h"
+#include "communication.h"
 
 #define IP_LENGTH 16
 #define PORT 10100
@@ -58,7 +59,7 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    FILE* file = fopen("/tmp/connections.txt", "r");
+    FILE* file = fopen("connections.txt", "r");
     if (file == NULL) {
       perror("Error opening connections file\n");
       exit(EXIT_FAILURE);
@@ -121,7 +122,6 @@ int main(int argc, char const *argv[]) {
         int curr_time = difftime(end, start);
         
         if (curr_time > TESTING_INTERVAL) {
-          printf("here\n");
           check_status(ips, num_connections);
           start = time(NULL);
         }
@@ -170,8 +170,7 @@ void check_status(char ips[][IP_LENGTH], int num_connections) {
 }
 
 //Calling receiving every 2 seconds
-void *receive_thread(void *server_fd)
-{
+void *receive_thread(void *server_fd) {
     int s_fd = *((int *)server_fd);
     while (1)
     {
@@ -225,15 +224,13 @@ void receiving(int server_fd)
                     int client_socket;
 
                     if ((client_socket = accept(server_fd, (struct sockaddr *)&address,
-                                                (socklen_t *)&addrlen)) < 0)
-                    {
+                                                (socklen_t *)&addrlen)) < 0) {
                         perror("accept");
                         exit(EXIT_FAILURE);
                     }
                     FD_SET(client_socket, &current_sockets);
                 }
-                else
-                {
+                else {
                     valread = recv(i, buffer, sizeof(buffer), 0);
                     send_array(i);
                     FD_CLR(i, &current_sockets);
