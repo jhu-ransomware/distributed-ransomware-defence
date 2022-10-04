@@ -4,8 +4,8 @@ CFLAGS = -c
 
 all: peer
 
-peer: p2p.o diagnose.o
-	$(CC) -o peer p2p.o diagnose.o
+peer: p2p.o diagnose.o adaptive.o communication.o 
+	$(CC) -o peer p2p.o diagnose.o adaptive.o communication.o 
 
 clean:
 	rm *.o
