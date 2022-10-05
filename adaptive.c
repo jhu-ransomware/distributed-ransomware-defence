@@ -3,7 +3,7 @@
 int tested_up[NUM_NODES];
 int FAULTY;
 
-void start_algo(int faulty, char ips[][IP_LENGTH], int num_connections, int node_num) {
+void start_algo(int faulty, connection connections[], int num_connections, int node_num) {
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int k = 0;
@@ -45,12 +45,12 @@ void start_algo(int faulty, char ips[][IP_LENGTH], int num_connections, int node
         scanf("%d", &ready);
     }
 
-    adaptive_dsd(faulty, ips, num_connections, node_num);
+    adaptive_dsd(faulty, connections, num_connections, node_num);
 
     close(server_fd);
 }
 
-void adaptive_dsd(int faulty, char ips[][IP_LENGTH], int num_connections, int node_num) {
+void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num) {
     fd_set readfds;
     FD_ZERO(&readfds);
 
@@ -72,7 +72,7 @@ void adaptive_dsd(int faulty, char ips[][IP_LENGTH], int num_connections, int no
         int curr_time = difftime(end, start);
         
         if (curr_time > TESTING_INTERVAL) {
-          update_arr(ips, num_connections, node_num);
+          update_arr(connections, num_connections, node_num);
           start = time(NULL);
         }
     }
@@ -133,9 +133,9 @@ void receiving(int server_fd) {
     }
 }
 
-void update_arr(char ips[][IP_LENGTH], int num_connections, int node_num) {
+void update_arr(connection connections[], int num_connections, int node_num) {
   for (int i = 0; i < num_connections; ++i) {
-    int sock = init_client_to_server(*(ips + i));
+    int sock = init_client_to_server(connections[i].ip_addr);
     if (sock < 0) {
         perror("Issue creating a socket\n");
         continue;
@@ -149,9 +149,7 @@ void update_arr(char ips[][IP_LENGTH], int num_connections, int node_num) {
       fault_status = request_fault_status(sock); // check fault status again before updating array
       close(sock);
       if (!fault_status) {
-          int len = strlen(*(ips + i));
-          int connecting_node = *(ips + i)[len - 1] - '0';
-          update_tested_up(new_arr,node_num, 1); // todo: put actual node numbers
+          update_tested_up(new_arr,node_num, connections[i].node_num); // todo: put actual node numbers
       }
       break;
     }
