@@ -9,6 +9,10 @@ void start_algo(int faulty, char ips[][IP_LENGTH], int num_connections, int node
     int k = 0;
     FAULTY = faulty;
 
+    for (int i = 0; i < NUM_NODES; ++i) {
+        tested_up[i] = -1;
+    }
+
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket failed");
@@ -68,7 +72,7 @@ void adaptive_dsd(int faulty, char ips[][IP_LENGTH], int num_connections, int no
         int curr_time = difftime(end, start);
         
         if (curr_time > TESTING_INTERVAL) {
-          update_arr(ips, num_connections);
+          update_arr(ips, num_connections, node_num);
           start = time(NULL);
         }
     }
@@ -116,8 +120,6 @@ void receiving(int server_fd) {
                     FD_SET(client_socket, &current_sockets);
                 } else {
                     int msg_type = receive_msg(i);
-                    // FD_CLR(i, &current_sockets);
-                    printf("msg_type: %i\n", msg_type);
                     if (msg_type == TEST_MSG) {
                         send_fault_status(i, FAULTY);
                     } else if (msg_type == REQUEST_MSG) {
@@ -131,7 +133,7 @@ void receiving(int server_fd) {
     }
 }
 
-void update_arr(char ips[][IP_LENGTH], int num_connections) {
+void update_arr(char ips[][IP_LENGTH], int num_connections, int node_num) {
   for (int i = 0; i < num_connections; ++i) {
     int sock = init_client_to_server(*(ips + i));
     if (sock < 0) {
@@ -142,12 +144,35 @@ void update_arr(char ips[][IP_LENGTH], int num_connections) {
     // Ask for fault status
     int fault_status = request_fault_status(sock);
     if (!fault_status) {
-      printf("%s array:\n", *(ips + i));
-      request_arr(sock);
+      int new_arr[NUM_NODES];
+      request_arr(sock, new_arr);
+      fault_status = request_fault_status(sock); // check fault status again before updating array
       close(sock);
+      if (!fault_status) {
+          int len = strlen(*(ips + i));
+          int connecting_node = *(ips + i)[len - 1] - '0';
+          update_tested_up(new_arr,node_num, 1); // todo: put actual node numbers
+      }
       break;
     }
 
     close(sock);
   }  
+}
+
+void update_tested_up(int new_arr[], int node, int tested_node) {
+    tested_up[node] = tested_node;
+    for (int i = 0; i < NUM_NODES; ++i) {
+        if (i < NUM_NODES - 1) printf("%i ", tested_up[i]);
+        else printf("%i\n", tested_up[i]);
+    }
+    for (int i = 0; i < NUM_NODES; ++i) {
+        if (i != node) {
+          tested_up[i] = new_arr[i];
+        }
+    }
+    for (int i = 0; i < NUM_NODES; ++i) {
+        if (i < NUM_NODES - 1) printf("%i ", tested_up[i]);
+        else printf("%i\n", tested_up[i]);
+    }
 }

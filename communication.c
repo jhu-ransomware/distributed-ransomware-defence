@@ -1,7 +1,6 @@
 #include "communication.h"
 
 void send_array(int sock, int arr[], int arr_size) {
-    printf("here we are\n");
     int buffer[arr_size];
     for (int i = 0; i < arr_size; ++i) {
         buffer[i] = htonl(arr[i]);
@@ -55,18 +54,14 @@ int request_fault_status(int sock) {
     return status;
 }
 
-void request_arr(int sock) {
+void request_arr(int sock, int arr[]) {
     int req_msg = REQUEST_MSG;
-    printf("here_1\n");
     send(sock, &req_msg, sizeof(req_msg), 0);
 
     int buffer[NUM_NODES] = {0};
-    printf("here\n");
-    recv(sock, &buffer, sizeof(buffer), 0);
-    printf("Sent array values: \n");
+    recv(sock, &buffer, sizeof(buffer) * sizeof(int), 0);
     for (int i = 0; i < NUM_NODES; ++i) {
         int val = ntohl(buffer[i]);
-        if (i < NUM_NODES - 1) printf("%d ", val);
-        else printf("%d\n", val);
+        arr[i] = val;
     }
 }

@@ -18,6 +18,6 @@ void send_fault_status(int sock, int faulty);
 int receive_msg(int sock);
 int init_client_to_server(char ip_address[]);
 int request_fault_status(int sock);
-void request_arr(int sock);
+void request_arr(int sock, int arr[]);
 
 #endif
