@@ -40,7 +40,7 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
     int ready = 0;
-    printf("Enter 1 to begin testing other nodes (hit enter twice):\n"); // TODO: Fix this needing enter twice
+    printf("Enter 1 to begin testing other nodes:\n"); // TODO: Fix this needing enter twice
     while (!ready) {
         scanf("%d", &ready);
     }
@@ -66,8 +66,8 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
         time_t end = time(NULL);
 
         if (select(1, &readfds, NULL, NULL, &timeout)) {
-            scanf("%d", &faulty);
-            printf("Updated fault status to: %i\n", faulty);
+            scanf("%d", &FAULTY);
+            printf("Updated fault status to: %i\n", FAULTY);
         }
         int curr_time = difftime(end, start);
         
