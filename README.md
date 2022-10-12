@@ -27,6 +27,12 @@ Note that CentOS is really annoying and until I get a better setup a couple of a
 (a) Compile with ```-std=c99``` flag <br/>
 (b) Turning on the firewall with ```systemctl stop firewalld``` if you find the other nodes can't connect to it but can ping it. <br/>
 
+## Running on Windows
+Because the library is written using unix libararies, requires some hacks to be able to run on Windows. <br/>
+1) Open up cygwin.bat shortcut on the desktop <br/>
+2) Navigate to /cygdrive/c/Users/OWL/Desktop/GroundStationWork/Distributed Defense System/DistributedDefenseSystem. From here, you can run and compile as normal. <br/>
+3) Also, will likely need to turn off windows firewall for the network that all the devices are on. You can do this by going to "windows defense firewall with advanced security", clicking on "windows defnender firewall properties" in the center pain, clicking on "window defender firewall properties", then going to public profile and click on protected networkc connection and then uncheck "ethernet" (this is the network everything is on). 
+
 ## TODOS ON IMPLEMENTATION
 
 I'm going to keep a running list of todos on here with the purposes of me not forgetting about them. These are things that don't necessarily keep the implementation from working but will need to be improved. <br/>
