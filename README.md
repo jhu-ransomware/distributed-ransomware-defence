@@ -38,3 +38,5 @@ Because the library is written using unix libararies, requires some hacks to be 
 I'm going to keep a running list of todos on here with the purposes of me not forgetting about them. These are things that don't necessarily keep the implementation from working but will need to be improved. <br/>
 1) Add a mutex lock around the tested up array usage.
 2) Better way of keeping track of how big to make array.
+3) Don't requiring entering your own node number
+4) Deal with case where all connected nodes are failed.
