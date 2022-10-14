@@ -66,9 +66,29 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
         time_t end = time(NULL);
 
         if (select(1, &readfds, NULL, NULL, &timeout)) {
-            scanf("%d", &FAULTY);
-            printf("Updated fault status to: %i\n", FAULTY);
+            int input;
+            scanf("%d", &input);
+            if (input == 0 || input == 1) {
+                FAULTY = input;
+                printf("Fault status changed to %d");
+            } 
+            else if (input == 2) {
+                int * diagnosis = diagnose(tested_up, node_num);
+                printf("Diagnosis: \n");
+                for (int i = 0; i < NUM_NODES; ++i) {
+                    if (diagnosis[i] == 1) {
+                        printf("Node %d is faulty \n", i);
+                    }
+                    else {
+                        printf("Node %d is not faulty \n", i);
+                    }
+                }
+            }
+            else {
+                printf("Invalid input. Enter 1 or 0 to change fault status, or 2 to diagnose.");
+            }
         }
+
         int curr_time = difftime(end, start);
         
         if (curr_time > TESTING_INTERVAL) {

@@ -2,7 +2,7 @@
 
 
 int * diagnose(int tested_up[], int index) {
-    int state_x[NUM_NODES];
+    int * state_x = (int *) malloc(NUM_NODES * sizeof(int));
 
     for (int i = 0; i < NUM_NODES; i++) {
         state_x[i] = 1;
