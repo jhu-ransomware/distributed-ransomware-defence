@@ -83,6 +83,7 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
                         printf("Node %d is not faulty \n", i);
                     }
                 }
+                free(diagnosis);
             }
             else {
                 printf("Invalid input. Enter 1 or 0 to change fault status, or 2 to diagnose.");
