@@ -13,6 +13,7 @@
 #include <time.h>
 #include "constants.h"
 #include "communication.h"
+#include "diagnose.h"
 
 void start_algo(int faulty, connection connections[], int num_connections, int node_num);
 void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num);
