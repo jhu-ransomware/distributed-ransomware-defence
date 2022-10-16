@@ -58,7 +58,7 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
-    printf("\n*****At any point in time enter a new fault status (1 or 0):*****");
+    printf("\n*****At any point in time enter a new fault status (1 or 0) or 2 to diagnose:*****"); 
     printf("\n");
     time_t start = time(NULL);
     while (1) {
