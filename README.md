@@ -40,3 +40,4 @@ I'm going to keep a running list of todos on here with the purposes of me not fo
 2) Better way of keeping track of how big to make array.
 3) Don't requiring entering your own node number
 4) Deal with case where all connected nodes are failed.
+5) Maybe small bug with input/output stream? Need to look into this more
