@@ -70,7 +70,7 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
             scanf("%d", &input);
             if (input == 0 || input == 1) {
                 FAULTY = input;
-                printf("Fault status changed to %d");
+                printf("Fault status changed to %d\n");
             } 
             else if (input == 2) {
                 int * diagnosis = diagnose(tested_up, node_num);
@@ -86,7 +86,7 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
                 free(diagnosis);
             }
             else {
-                printf("Invalid input. Enter 1 or 0 to change fault status, or 2 to diagnose.");
+                printf("Invalid input. Enter 1 or 0 to change fault status, or 2 to diagnose.\n");
             }
         }
 
@@ -155,6 +155,7 @@ void receiving(int server_fd) {
 }
 
 void update_arr(connection connections[], int num_connections, int node_num) {
+  int found_non_faulty = 0;
   for (int i = 0; i < num_connections; ++i) {
     int sock = init_client_to_server(connections[i].ip_addr);
     if (sock < 0) {
@@ -164,19 +165,25 @@ void update_arr(connection connections[], int num_connections, int node_num) {
 
     // Ask for fault status
     int fault_status = request_fault_status(sock);
-    if (!fault_status) {
+    if ((!FAULTY && !fault_status) || (FAULTY && fault_status)) { // todo: Add more logic here
       int new_arr[NUM_NODES];
       request_arr(sock, new_arr);
       fault_status = request_fault_status(sock); // check fault status again before updating array
       close(sock);
-      if ((!fault_status) || (FAULTY && fault_status)) {
-          update_tested_up(new_arr,node_num, connections[i].node_num); // todo: put actual node numbers
+      if ((!FAULTY && !fault_status) || (FAULTY && fault_status)) {
+          update_tested_up(new_arr,node_num, connections[i].node_num); 
+          found_non_faulty = 1;
       }
       break;
     }
 
     close(sock);
   }  
+  
+  if (!found_non_faulty) {
+      tested_up[node_num] = -1;
+      printf("Every connected node is faulty\n");
+  }
 }
 
 void update_tested_up(int new_arr[], int node, int tested_node) {
