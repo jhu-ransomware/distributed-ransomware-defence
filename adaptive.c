@@ -169,7 +169,7 @@ void update_arr(connection connections[], int num_connections, int node_num) {
       request_arr(sock, new_arr);
       fault_status = request_fault_status(sock); // check fault status again before updating array
       close(sock);
-      if (!fault_status) {
+      if ((!fault_status) || (FAULTY && fault_status)) {
           update_tested_up(new_arr,node_num, connections[i].node_num); // todo: put actual node numbers
       }
       break;
