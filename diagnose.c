@@ -9,10 +9,10 @@ int * diagnose(int tested_up[], int index) {
     }
 
     int ptr = index;
-    while (ptr != index) {    
+    do {    
         state_x[ptr] = 0;
         ptr = tested_up[ptr];
-    } 
+    } while (ptr != index);
 
     return state_x;
 }
