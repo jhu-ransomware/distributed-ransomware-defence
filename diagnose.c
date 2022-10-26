@@ -12,7 +12,7 @@ int * diagnose(int tested_up[], int index) {
     do {    
         state_x[ptr] = 0;
         ptr = tested_up[ptr];
-    } while (ptr != index || tested_up[ptr] != -1);
+    } while (ptr != index && ptr != -1);
 
     return state_x;
 }

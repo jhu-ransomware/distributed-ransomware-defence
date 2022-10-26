@@ -82,7 +82,7 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
             scanf("%d", &input);
             if (input == 0 || input == 1) {
                 FAULTY = input;
-                printf("Fault status changed to %d\n");
+                printf("Fault status changed to %d\n", FAULTY);
             } 
             else if (input == 2) {
                 int * diagnosis = diagnose(tested_up, node_num);
