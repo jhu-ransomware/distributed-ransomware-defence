@@ -19,5 +19,6 @@ int receive_msg(int sock);
 int init_client_to_server(char ip_address[]);
 int request_fault_status(int sock);
 void request_arr(int sock, int arr[]);
+void send_msg_to_demo_node(char ip_address[], int node_num, int arr[], int arr_size);
 
 #endif

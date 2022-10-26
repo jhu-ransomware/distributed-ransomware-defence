@@ -2,6 +2,7 @@
 
 int tested_up[NUM_NODES];
 int FAULTY;
+char DEMO_IP[IP_LENGTH];
 
 void start_algo(int faulty, connection connections[], int num_connections, int node_num) {
     int server_fd, new_socket, valread;
@@ -34,13 +35,24 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
         perror("listen");
         exit(EXIT_FAILURE);
     }
+
+    char str[100];
+    if (DEMO) {
+        printf("Enter an ip address to send results to for demo:\n");
+        char dummy;
+        scanf("%c", &dummy);
+        fgets(str,sizeof(str), stdin);
+        str[strcspn(str, "\r\n")] = 0; // Strip out new line chars
+        strcpy(DEMO_IP, str);
+        printf("Demo ip_addr: %s\n", DEMO_IP);
+    }
     
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
     int ready = 0;
-    printf("Enter 1 to begin testing other nodes:\n"); // TODO: Fix this needing enter twice
+    printf("Enter 1 to begin testing other nodes:\n");
     while (!ready) {
         scanf("%d", &ready);
     }
@@ -94,6 +106,13 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
         
         if (curr_time > TESTING_INTERVAL) {
           update_arr(connections, num_connections, node_num);
+          if (DEMO) {
+              printf("here\n");
+              int * diagnosis = diagnose(tested_up, node_num);
+              printf("here\n");
+              send_msg_to_demo_node(DEMO_IP, node_num, diagnosis, NUM_NODES);
+              free(diagnosis);
+          }
           start = time(NULL);
         }
     }

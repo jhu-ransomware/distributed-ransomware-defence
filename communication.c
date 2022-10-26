@@ -65,3 +65,30 @@ void request_arr(int sock, int arr[]) {
         arr[i] = val;
     }
 }
+
+void send_msg_to_demo_node(char demo_address[], int node_num, int arr[], int arr_size) {
+    int sock = init_client_to_server(demo_address);
+    if (sock < 0) {
+        perror("Issue creating a socket\n");
+        return;
+    }
+
+    int buffer_size = arr_size + 1;
+    int buffer[buffer_size];
+    buffer[0] = htonl(node_num);
+    for (int i = 0; i < arr_size; ++i) {
+        buffer[i + 1] = htonl(arr[i]);
+    }
+
+    printf("buffer size: %d\n", buffer_size);
+
+    for (int i = 0; i < buffer_size; ++i) {
+        printf("%d\n", buffer[i]);
+    }
+
+    if (send(sock, buffer, buffer_size * sizeof(int), 0) < 0) {
+        perror("Error sending demo array\n");
+    }
+
+    close(sock);
+}
