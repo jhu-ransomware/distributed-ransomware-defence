@@ -3,7 +3,7 @@ import socket
 import sys
 
 PORT = 10100
-NUM_NODES = 3
+NUM_NODES = 2
 
 INT_SIZE_C = 4
 
@@ -26,9 +26,12 @@ while True:
         while True:
             data = connection.recv(1024)
             node = int.from_bytes(data[:4], byteorder=sys.byteorder)
-            diagnosis = [x for x in data[4:]]
+            diagnosis = []
+            for i in range(4, 4 + 4  * NUM_NODES, 4):
+                print("Here")
+                diagnosis.append(int.from_bytes(data[i:i+4], byteorder=sys.byteorder))
             
-            print(f"Node {node} diagnosis:\n{data[4:]}")
+            print(f"Node {node} diagnosis:\n{diagnosis[4:]}")
             break
 
     finally:
