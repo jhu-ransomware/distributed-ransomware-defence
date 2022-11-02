@@ -3,8 +3,11 @@ import sys
 import pygame, sys
 from pygame.locals import *
 
-NUM_NODES = 2
+NUM_NODES = 5
 results = [0 for element in range(10)]
+
+def convert_network_bytes_to_int(bytes):
+    return socket.ntohl(int.from_bytes(bytes, byteorder=sys.byteorder))
 
 def draw_rect(display):
     WHITE=(255,255,255)
@@ -44,13 +47,9 @@ def draw(sock):
             # Receive the data in small chunks and retransmit it
             while True:
                 data = connection.recv(1024)
-                node = int.from_bytes(data[:4], byteorder=sys.byteorder)
-                diagnosis = []
-                for i in range(4, 4 + 4  * NUM_NODES, 4):
-                    print("Here")
-                    diagnosis.append(int.from_bytes(data[i:i+4], byteorder=sys.byteorder))
-                
-                print(f"Node {node} diagnosis:\n{diagnosis[4:]}")
+                for i in range(NUM_NODES):
+                    results[i] = convert_network_bytes_to_int(data[i * 4:(i+1) * 4])
+
                 break
 
         finally:
