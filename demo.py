@@ -3,7 +3,7 @@ import sys
 import pygame, sys
 from pygame.locals import *
 
-NUM_NODES = 8
+NUM_NODES = 3
 results = [0 for _ in range(NUM_NODES)]
 
 SCREEN_WIDTH = 500
