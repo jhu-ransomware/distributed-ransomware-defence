@@ -92,11 +92,10 @@ void send_msg_to_demo_node(char demo_address[], int node_num, int arr[], int arr
         return;
     }
 
-    int buffer_size = arr_size + 1;
+    int buffer_size = arr_size;
     int buffer[buffer_size];
-    buffer[0] = htonl(node_num);
     for (int i = 0; i < arr_size; ++i) {
-        buffer[i + 1] = htonl(arr[i]);
+        buffer[i] = htonl(arr[i]);
     }
 
     printf("buffer size: %d\n", buffer_size);
