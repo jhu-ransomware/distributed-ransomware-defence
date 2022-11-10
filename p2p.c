@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]) {
     scanf("%d", &faulty);
 
 
-    FILE* file = fopen("/tmp/connections.txt", "r");
+    FILE* file = fopen("connections.txt", "r");
     if (file == NULL) {
       perror("Error opening connections file\n");
       exit(EXIT_FAILURE);
