@@ -78,24 +78,24 @@ def draw(sock):
             if event.type==QUIT:
                 pygame.quit()
                 sys.exit()
-
-        print('waiting for a connection')
-        connection, client_address = sock.accept()
-
         try:
-            print(f"connection from {client_address}")
+            sock.settimeout(2.0)
+            connection, client_address = sock.accept()
 
-            # Receive the data in small chunks and retransmit it
-            while True:
-                data = connection.recv(1024)
-                for i in range(NUM_NODES):
-                    results[i] = convert_network_bytes_to_int(data[i * 4:(i+1) * 4])
+            try:
+                # Receive the data in small chunks and retransmit it
+                while True:
+                    data = connection.recv(1024)
+                    for i in range(NUM_NODES):
+                        results[i] = convert_network_bytes_to_int(data[i * 4:(i+1) * 4])
 
-                break
+                    break
 
-        finally:
-            # Clean up the connection
-            connection.close()
+            finally:
+                # Clean up the connection
+                connection.close()
+        except socket.timeout:
+          continue
         
         draw_rect(DISPLAY)
 
