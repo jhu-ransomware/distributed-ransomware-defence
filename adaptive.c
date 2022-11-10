@@ -2,7 +2,8 @@
 
 int tested_up[NUM_NODES];
 int FAULTY;
-char DEMO_IP[IP_LENGTH];
+char DEMO_IP[] = "127.0.0.1";
+int DEMO = 0;
 
 void start_algo(int faulty, connection connections[], int num_connections, int node_num) {
     int server_fd, new_socket, valread;
@@ -36,16 +37,8 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
         exit(EXIT_FAILURE);
     }
 
-    char str[100];
-    if (DEMO) {
-        printf("Enter an ip address to send results to for demo:\n");
-        char dummy;
-        scanf("%c", &dummy);
-        fgets(str,sizeof(str), stdin);
-        str[strcspn(str, "\r\n")] = 0; // Strip out new line chars
-        strcpy(DEMO_IP, str);
-        printf("Demo ip_addr: %s\n", DEMO_IP);
-    }
+    printf("Please enter if you wish to send results to a demo (1 for yes, 0 for no):\n");
+    scanf("%d", &DEMO);
     
     int ch;
     pthread_t tid;

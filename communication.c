@@ -44,6 +44,25 @@ int init_client_to_server(char ip_address[]) {
     return sock;
 }
 
+int init_demo_socket() {
+    int sock = 0, valread;
+    struct sockaddr_in serv_addr;
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        printf("\n Socket creation error \n");
+        return -1;
+    }
+
+    serv_addr.sin_family = AF_INET;
+    inet_pton(AF_INET, "127.0.0.1", &(serv_addr.sin_addr));
+    serv_addr.sin_port = htons(DEMO_PORT);
+
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        printf("\nConnection Failed \n");
+        return -1;
+    }
+    return sock;
+}
+
 int request_fault_status(int sock) {
     int test_msg = TEST_MSG;
     send(sock, &test_msg, sizeof(test_msg), 0);
@@ -67,7 +86,7 @@ void request_arr(int sock, int arr[]) {
 }
 
 void send_msg_to_demo_node(char demo_address[], int node_num, int arr[], int arr_size) {
-    int sock = init_client_to_server(demo_address);
+    int sock = init_demo_socket();
     if (sock < 0) {
         perror("Issue creating a socket\n");
         return;
