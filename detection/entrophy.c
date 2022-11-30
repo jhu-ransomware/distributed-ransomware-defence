@@ -1,15 +1,7 @@
 /*
 This code is adapted from https://github.com/robvandenbrink/Ransomware-Scan-and-Replicate/blob/V1.0/entropy.c
 */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <math.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "entrophy.h"
 
 int makehist(FILE *fh, int *hist, int len) {
   int wherechar[256];
@@ -46,14 +38,14 @@ double entropy(int *hist, int histlen, int len) {
   return H;
 }
 
-int main(int argc, char *argv[]) {
+double calc_entrophy_file(char * filename) {
   FILE *fh;
   struct stat fileinfo;
   long fsz;
   int len, *hist, histlen;
   double H;
-  if ((fh = fopen(argv[1], "rb")) == NULL) {
-    printf("Error opening file %s\n", argv[1]);
+  if ((fh = fopen(filename, "rb")) == NULL) {
+    printf("Error opening file %s\n", filename);
   }
   else {
     fstat(fileno(fh), &fileinfo);
@@ -65,5 +57,5 @@ int main(int argc, char *argv[]) {
   H = entropy(hist, histlen, fsz);
   fclose(fh);
   printf("%lf\n", H);
-  return 0;
+  return H;
 }
