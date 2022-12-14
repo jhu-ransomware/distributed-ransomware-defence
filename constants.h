@@ -10,9 +10,16 @@
 #define TEST_MSG 1
 #define REQUEST_MSG 2
 
+#define ENTROPHY_THRESHOLD 2
+
 typedef struct {
   char ip_addr[IP_LENGTH];
   int node_num;
 } connection;
+
+typedef struct {
+  char filename[100];
+  double entrophy;
+} file_entr;
 
 #endif
