@@ -13,6 +13,7 @@ test: test.o monitor.o entrophy.o
 clean:
 	rm *.o
 	rm peer
+	rm test_entr
 
 %.o: %.c
 	$(CC) $(CFLAGS) $*.c
