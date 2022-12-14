@@ -14,6 +14,6 @@ int makehist(FILE *fh, int *hist, int len);
 
 double entropy(int *hist, int histlen, int len);
 
-double calc_file(char * filename);
+double calc_entrophy_file(char * filename);
 
 #endif
