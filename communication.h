@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <time.h>
 #include "constants.h"
+#include "hash.h"
 
 void send_array(int sock, int arr[], int arr_size);
 void send_fault_status(int sock, int faulty);

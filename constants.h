@@ -12,6 +12,8 @@
 
 #define ENTROPHY_THRESHOLD 2
 
+#define NON_FAULTY_VAL "WE_ARE_GOOD"
+
 typedef struct {
   char ip_addr[IP_LENGTH];
   int node_num;

@@ -12,7 +12,8 @@ void send_array(int sock, int arr[], int arr_size) {
 }
 
 void send_fault_status(int sock, int faulty) {
-    int status = htonl(faulty);
+    int hash_val = hash(NON_FAULTY_VAL, strlen(NON_FAULTY_VAL));
+    int status = htonl(hash_val);
 
     if (send(sock, &status, sizeof(int), 0) < 0) {
         perror("Error sending tested up\n");
@@ -70,7 +71,11 @@ int request_fault_status(int sock) {
     int status;
     recv(sock, &status, sizeof(status), 0);
     status = ntohl(status);
-    return status;
+
+    if (status == hash(NON_FAULTY_VAL, strlen(NON_FAULTY_VAL))) {
+      return 0;
+    }
+    return 1;
 }
 
 void request_arr(int sock, int arr[]) {
