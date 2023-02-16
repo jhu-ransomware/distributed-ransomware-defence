@@ -1,16 +1,24 @@
 #include "monitor.h"
 
-int update_entrophy(file_entr entrophies[], int arr_len) {
+int run_detection(file_entr entrophies[], int arr_len) {
+    int encrp_files = run_detection(entrophies, arr_len);
+    if (encrp_files / arr_len > ENTROPHY_INCREASE_BATCH) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
+int update_entrophy(file_entr entrophies[], int arr_len) {
+    int encrp_files = 0;
     for (int i = 0; i < arr_len; ++i) {
         file_entr curr = entrophies[i];
         double entr = calc_entrophy_file(curr.filename);
-        // Simple for testing just update if entrophy is greater than 50%
-        if ((entr - curr.entrophy) / curr.entrophy > 0.5) {
-          return 1;
+        if ((entr - curr.entrophy) / curr.entrophy > ENTROPHY_INCREASE_FILE) {
+            encrp_files++;
         }
         curr.entrophy = entr;
     }
 
-    return 0;
+    return encrp_files;
 }
