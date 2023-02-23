@@ -16,9 +16,10 @@
 #include "communication.h"
 #include "diagnose.h"
 #include "entrophy.h"
+#include "monitor.h"
 
 void start_algo(int faulty, connection connections[], int num_connections, int node_num);
-void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num);
+void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num, file_entr lookup[], int num_files);
 void update_arr(connection connections[], int num_connections, int node_num);
 void * receive_thread(void * server_fd);
 void receiving(int server_fd);

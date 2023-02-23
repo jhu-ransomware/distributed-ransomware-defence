@@ -85,12 +85,12 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
         scanf("%d", &ready);
     }
 
-    adaptive_dsd(faulty, connections, num_connections, node_num);
+    adaptive_dsd(faulty, connections, num_connections, node_num, file_lookup, index);
 
     close(server_fd);
 }
 
-void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num) {
+void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num, file_entr lookup[], int num_files) {
     fd_set readfds;
     FD_ZERO(&readfds);
 
@@ -108,11 +108,13 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
         if (select(1, &readfds, NULL, NULL, &timeout)) {
             int input;
             scanf("%d", &input);
-            if (input == 0 || input == 1) {
-                FAULTY = input;
-                printf("Fault status changed to %d\n", FAULTY);
-            } 
-            else if (input == 2) {
+            // Commenting out below for now to not allow manuel update of fault
+            // if (input == 0 || input == 1) {
+            //     FAULTY = input;
+            //     printf("Fault status changed to %d\n", FAULTY);
+            // } 
+
+            if (input == 2) {
                 int * diagnosis = diagnose(tested_up, node_num);
                 printf("Diagnosis: \n");
                 for (int i = 0; i < NUM_NODES; ++i) {
@@ -141,6 +143,12 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
               send_msg_to_demo_node(DEMO_IP, node_num, diagnosis, NUM_NODES);
               free(diagnosis);
           }
+
+          // update lookup table
+          if (!FAULTY && run_detection(lookup, num_files)) {
+              FAULTY = 1;
+          }
+
           start = time(NULL);
         }
     }
