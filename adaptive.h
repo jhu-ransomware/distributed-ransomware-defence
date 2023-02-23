@@ -11,9 +11,11 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 #include <time.h>
+#include <dirent.h>
 #include "constants.h"
 #include "communication.h"
 #include "diagnose.h"
+#include "entrophy.h"
 
 void start_algo(int faulty, connection connections[], int num_connections, int node_num);
 void adaptive_dsd(int faulty, connection connections[], int num_connections, int node_num);
@@ -21,5 +23,6 @@ void update_arr(connection connections[], int num_connections, int node_num);
 void * receive_thread(void * server_fd);
 void receiving(int server_fd);
 void update_tested_up(int new_arr[], int node, int tested_node);
+void init_files(file_entr * files, int * size);
 
 #endif

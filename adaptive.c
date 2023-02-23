@@ -26,13 +26,11 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-    {
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    if (listen(server_fd, 5) < 0)
-    {
+    if (listen(server_fd, 5) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
     }
@@ -44,6 +42,30 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
+    int size = 10;
+    file_entr ** file_lookup = malloc(sizeof(file_entr) * 10);
+
+    // Build the initial lookup table
+    struct dirent *de;  // Pointer for directory entry
+  
+    // opendir() returns a pointer of DIR type. 
+    DIR *dr = opendir("./test");
+  
+    if (dr == NULL)  // opendir returns NULL if couldn't open directory
+    {
+        printf("Could not open test directory\n" );
+    }
+  
+    // Refer http://pubs.opengroup.org/onlinepubs/7990989775/xsh/readdir.html
+    // for readdir()
+    while ((de = readdir(dr)) != NULL) {
+        if (!strcmp (de->d_name, ".") || !strcmp (de->d_name, ".."))
+            continue;
+        printf("%s\n", de->d_name);
+    }
+  
+    closedir(dr);    
+    
     int ready = 0;
     printf("Enter 1 to begin testing other nodes:\n");
     while (!ready) {
