@@ -1,4 +1,5 @@
 #include "adaptive.h"
+#include "entrophy.h"
 
 int tested_up[NUM_NODES];
 int FAULTY;
@@ -42,9 +43,6 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
-    int size = 10;
-    file_entr ** file_lookup = malloc(sizeof(file_entr) * 10);
-
     // Build the initial lookup table
     struct dirent *de;  // Pointer for directory entry
   
@@ -58,10 +56,25 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
   
     // Refer http://pubs.opengroup.org/onlinepubs/7990989775/xsh/readdir.html
     // for readdir()
+    int file_count = 0;
     while ((de = readdir(dr)) != NULL) {
         if (!strcmp (de->d_name, ".") || !strcmp (de->d_name, ".."))
             continue;
-        printf("%s\n", de->d_name);
+        file_count++;
+    }
+    rewinddir(dr); // reset to beginning
+
+    file_entr file_lookup[file_count];
+    int index = 0;
+    while ((de = readdir(dr)) != NULL) {
+        if (!strcmp (de->d_name, ".") || !strcmp (de->d_name, ".."))
+            continue;
+        char temp_filename[100] = {'.', '/', 't', 'e', 's', 't', '/', 0};
+        strcat(temp_filename, de->d_name);
+        strcpy(file_lookup[index].filename, temp_filename);
+        file_lookup[index].entrophy = calc_entrophy_file(temp_filename);
+        //printf("%lf\n", file_lookup[index].entrophy);
+        index++;
     }
   
     closedir(dr);    

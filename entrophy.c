@@ -3,6 +3,12 @@ This code is adapted from https://github.com/robvandenbrink/Ransomware-Scan-and-
 */
 #include "entrophy.h"
 
+// not included in some cases
+double log2( double n ) {  
+    // log(n)/log(2) is log2.  
+    return log( n ) / log( 2 );  
+}  
+
 int makehist(FILE *fh, int *hist, int len) {
   int wherechar[256];
   int i, j, histlen, buflen;
@@ -48,7 +54,7 @@ double calc_entrophy_file(char * filename) {
     printf("Error opening file %s\n", filename);
   }
   else {
-    fstat(fileno(fh), &fileinfo);
+    stat(filename, &fileinfo);
     fsz = fileinfo.st_size;
   }
   hist = (int *)calloc(fsz, sizeof(int));
@@ -56,6 +62,6 @@ double calc_entrophy_file(char * filename) {
   // hist now has no order (known to the program) but that doesn't matter
   H = entropy(hist, histlen, fsz);
   fclose(fh);
-  printf("%lf\n", H);
+  //printf("%lf\n", H);
   return H;
 }
