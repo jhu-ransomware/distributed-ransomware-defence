@@ -1,7 +1,7 @@
 #include "monitor.h"
 
 int run_detection(file_entr entrophies[], int arr_len) {
-    int encrp_files = run_detection(entrophies, arr_len);
+    int encrp_files = update_entrophy(entrophies, arr_len);
     if (encrp_files / arr_len > ENTROPHY_INCREASE_BATCH) {
         return 1;
     } else {
