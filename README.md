@@ -41,3 +41,6 @@ I'm going to keep a running list of todos on here with the purposes of me not fo
 3) Don't requiring entering your own node number
 4) Deal with case where all connected nodes are failed.
 5) Ensure goes through an adaptive round with new new status before updating
+
+## Notes on detection module
+The detection module is purposely designed to be swapable. Currently, it uses a file entrophy based approach to do so. If this would ever want to be changed, the only code that would be affected is the "run_detection" function in monitor.c (as well as it's called functions) to instead use a different approach. Also, note that the code building the lookup table used by "run_detection" would no longer be needed either. 
