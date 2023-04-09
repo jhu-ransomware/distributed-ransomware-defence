@@ -137,9 +137,7 @@ void adaptive_dsd(int faulty, connection connections[], int num_connections, int
         if (curr_time > TESTING_INTERVAL) {
           update_arr(connections, num_connections, node_num);
           if (DEMO) {
-              printf("here\n");
               int * diagnosis = diagnose(tested_up, node_num);
-              printf("here\n");
               send_msg_to_demo_node(DEMO_IP, node_num, diagnosis, NUM_NODES);
               free(diagnosis);
           }
