@@ -43,6 +43,11 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
+    /**
+     * The following code is specific to the diagnose method of file entrophy. If the diagnose method is changed, then the following code will 
+     * need to be deleted and changed. 
+    */
+
     // Build the initial lookup table
     struct dirent *de;  // Pointer for directory entry
   
@@ -78,6 +83,10 @@ void start_algo(int faulty, connection connections[], int num_connections, int n
     }
   
     closedir(dr);    
+
+    /**
+     * End of code specific to file entrophy method.
+    */
     
     int ready = 0;
     printf("Enter 1 to begin testing other nodes:\n");
