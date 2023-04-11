@@ -10,13 +10,13 @@ gcc p2p.c -o peer -lpthread
 ```
 
 In order to run the program, you need a connections.txt (located in the same folder as the running program), that details the connections of the node it is running on.
-This file will first consist of the number of connections followed by a series of ip addresses, each seperated by a new line. <br/>
+This file will first consist of the number of connections followed by a series of ip addresses and node numbers (in the form "[node_num] [ip_addr]"), each seperated by a new line. <br/>
 Example:
 ```
 3
-192.168.11.2
-192.168.11.3
-192.168.11.4
+1 192.168.11.2
+2 192.168.11.3
+3 192.168.11.4
 ```
 
 Whenever one first starts the program, they will be prompted for (a) the name of the system it is running on, and (b) the fault status of the program.
