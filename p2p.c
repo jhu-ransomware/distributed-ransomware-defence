@@ -35,16 +35,27 @@ int main(int argc, char const *argv[]) {
     fscanf(file, "%d ", &num_connections);
 
     char ips[num_connections][IP_LENGTH];
-    char ip[IP_LENGTH];
     connection nodes[num_connections];
+
+    char line[1000]; // string to read in line from file
 
     // Read in list of connections
     int k = 0;
-    while (fgets(ip, sizeof(ip), file)) {
-      ip[strcspn(ip, "\r\n")] = 0; // strip out new line characters
-      int len = strlen(ip);
-      int node_num = ip[len - 1] - '0' - 3;
-      strcpy(nodes[k].ip_addr, ip);
+    while (fgets(line, sizeof(line), file)) {
+
+      // Split line into tokens
+      char * token = strtok(line, " ");
+
+      // Get node number from first
+      int node_num = atoi(token);
+      token = strtok(NULL, " ");
+
+      // Strip out new line and get ip addr
+      token[strcspn(token, "\r\n")] = 0; // strip out new line characters
+      int len = strlen(token);
+
+      // Copy over to array struct
+      strcpy(nodes[k].ip_addr, token);
       nodes[k].node_num = node_num;
       k++;
     }
