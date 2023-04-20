@@ -12,7 +12,7 @@
 
 int makehist(FILE *fh, int *hist, int len);
 
-double log2(double n);
+// double log2(double n);
 
 double entropy(int *hist, int histlen, int len);
 
