@@ -12,15 +12,14 @@ void send_array(int sock, int arr[], int arr_size) {
 }
 
 void send_fault_status(int sock, int faulty) {
-    const char * fault_val = "Lorem ipsum";
     int status = 0;
+    int hash_val = hash(NON_FAULTY_VAL, strlen(NON_FAULTY_VAL));
+    status = htonl(hash_val);
 
-    if (!faulty) {
-        int hash_val = hash(NON_FAULTY_VAL, strlen(NON_FAULTY_VAL));
-        status = htonl(hash_val);
-    } else {
+    if (faulty) {
+        const char * fault_val = "Lorem ipsum";
         int hash_val = hash(fault_val, strlen(fault_val));
-        status = htonl(hash_val);
+        status = htonl(hash_val); // random value
     }
 
     if (send(sock, &status, sizeof(int), 0) < 0) {
