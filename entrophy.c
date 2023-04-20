@@ -3,11 +3,13 @@ This code is adapted from https://github.com/robvandenbrink/Ransomware-Scan-and-
 */
 #include "entrophy.h"
 
+/*
 // not included in some cases
 double log2( double n ) {  
     // log(n)/log(2) is log2.  
     return log( n ) / log( 2 );  
 }  
+*/
 
 int makehist(FILE *fh, int *hist, int len) {
   int wherechar[256];
