@@ -54,6 +54,7 @@ double calc_entrophy_file(char * filename) {
   double H;
   if ((fh = fopen(filename, "rb")) == NULL) {
     printf("Error opening file %s\n", filename);
+    return -1;
   }
   else {
     stat(filename, &fileinfo);
