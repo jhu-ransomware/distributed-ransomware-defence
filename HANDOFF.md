@@ -19,3 +19,10 @@ python script set to 0. <br/>
 Because I was just trying to get a simple app going, it communicates via sending the results to the python app using sockets, but there is a definitely a better way to do it. <br/>
 7) Other note on the UI, is that when the program is running, it prints out the results of the "tested_up" array before and after each testing round. You can then press 2 to see the current
 diagnosis of the entire system.
+
+# Notes about running on the test system
+1) We are using cygwin here because the code was developed for Linux, so it doesn't run natively on windows. However, so far, this has proved to be a sufficient alternative
+even if it isn't ideal. <br\>
+2) Becuase the cygwin file navigation can be a bit of a pain, I set up an alias ```cdDDS``` on each of the systems that will take you to the right directory to run the program from.
+
+# Notes about code structure and Github
