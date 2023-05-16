@@ -26,3 +26,5 @@ even if it isn't ideal. <br\>
 2) Becuase the cygwin file navigation can be a bit of a pain, I set up an alias ```cdDDS``` on each of the systems that will take you to the right directory to run the program from.
 
 # Notes about code structure and Github
+1) Code is seperated into different files/headers based on what they do. ```p2p.c``` starts the main algorithm and any setup. The main algorithm code runs from ```adaptive.c```. Anything dealing with sockets/communication between nodes was seperated into ```communication.c``` as best as possible but it wasn't perfect seperation. Finally, code relating to detection of Ransomware is in ```monitor.c``` and ```entrophy.c```. <br/>
+2) There are two different branches in the repo. One of these is ```detection_integration``` and has the detection module fully integrated. The other is ```without_detection``` and is an earlier version of the code without the detection module fully integrated (i.e. the main loop is just the diagnosis piece) if you would ever want to look at that or roll back to it.
